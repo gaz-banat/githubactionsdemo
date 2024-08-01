@@ -33,7 +33,7 @@ jobs:
         uses: azure/aks-set-context@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          cluster-name: nefarious
+          cluster-name: tupperware
           resource-group: resourcegroup1
 
       - name: check java version
