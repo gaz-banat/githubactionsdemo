@@ -14,18 +14,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Run a one line script
-        run: echo Hello, World!
-
-      - name: Run a custom script
-        run: |
-          ls -al
-
-      - name: Run another job
-        run: |
-          echo Add other actions to build
-          echo test, and deploy your project
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '21'
 
       - name: check java version
         run: java -version
