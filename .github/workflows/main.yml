@@ -24,27 +24,39 @@ jobs:
         with: 
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-      # - name: check java version
-      #   run: java -version
+      - name: RUN AZ Command
+        run: |
+          az account show
+          az group list
 
-      # - name: do a gradle build
-      #   run: gradle build
+      - name: aks set context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: nefarious
+          resource-group: resourcegroup1
 
-      # - name: do a gradlew build
-      #   run: ./gradlew build
+      - name: check java version
+        run: java -version
 
-      # - name: get docker version
-      #   run: |
-      #     docker -v
-      #     docker images -a
+      - name: do a gradle build
+        run: gradle build
+
+      - name: do a gradlew build
+        run: ./gradlew build
+
+      - name: get docker version
+        run: |
+          docker -v
+          docker images -a
       
-      # - name: docker login
-      #   run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
+      - name: docker login
+        run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
 
-      # - name: build docker image
-      #   run: |
-      #     docker build -t ghazanfar/demo-kotlin:2.0 .
-      #     docker images -a 
+      - name: build docker image
+        run: |
+          docker build -t ghazanfar/demo-kotlin:2.0 .
+          docker images -a 
 
-      # - name: docker image push
-      #   run: docker push ghazanfar/demo-kotlin:2.0
+      - name: docker image push
+        run: docker push ghazanfar/demo-kotlin:2.0
