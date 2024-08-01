@@ -36,10 +36,10 @@ jobs:
       - name: docker login
         run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
 
-#      - name: build docker image
-#        run: |
-#          docker build -t ghazanfar/demo-kotlin:2.0 .
-#          docker images -a 
+      - name: build docker image
+        run: |
+          docker build -t ghazanfar/demo-kotlin:2.0 .
+          docker images -a 
 
       - name: docker image push
         run: docker push ghazanfar/demo-kotlin:2.0
