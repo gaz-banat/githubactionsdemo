@@ -31,3 +31,8 @@ jobs:
       - name: get docker version
         run: |
           docker -v
+          docker images -a
+
+      - name: build docker image
+        run: |
+          docker build -t demo-kotlin:2.0 .
