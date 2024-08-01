@@ -26,3 +26,9 @@ jobs:
         run: |
           echo Add other actions to build
           echo test, and deploy your project
+
+      - name: check java version
+        run: java -version
+
+      - name: do a gradel build
+        run: gradle build
