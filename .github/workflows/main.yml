@@ -41,12 +41,13 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }} # We build the tag from the git commit sha
         run: |
-          docker build -t ghazanfar/demo-kotlin:$IMAGE_TAG .
+          docker build -t ghazanfar/demo-kotlin:${GITHUB_SHA::8} .
           docker images -a 
-          docker push ghazanfar/demo-kotlin:$IMAGE_TAG 
+          docker push ghazanfar/demo-kotlin:${GITHUB_SHA::8} 
 
 ## Deploy to Kubernetes
   deploy:
+    if: ${{ github.ref == 'refs/heads/dev' }}
     needs:
       - build
 
@@ -55,34 +56,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Log in with Azure action
-      #   uses: azure/login@v1
-      #   with: 
-      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - name: Log in with Azure action
+        uses: azure/login@v1
+        with: 
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-      # - name: RUN AZ Command
-      #   run: |
-      #     az account show
-      #     az group list
-
-      # - name: aks set context
-      #   uses: azure/aks-set-context@v1
-      #   with:
-      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
-      #     cluster-name: tupperware
-      #     resource-group: resourcegroup1
-
-      # - name: create namespace
-      #   run: |
-      #     kubectl apply -f Kubernetes/namespace.yaml
-      
-      - name: update deployment file
+      - name: RUN AZ Command
         run: |
-          sed -i "s|image: docker.io/ghazanfar/demo-kotlin:|image: docker.io/ghazanfar/demo-kotlin:${{ github.sha }}|g" Kubernetes/deployment.yaml
+          az account show
+          az group list
 
-      - name: cat the deployment file
-        run: | 
-          cat Kubernetes/deployment.yaml
+      - name: aks set context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: tupperware
+          resource-group: resourcegroup1
+
+      - name: create namespace
+        run: |
+          kubectl apply -f Kubernetes/namespace.yaml
+      
+      ## Still need to figure this out
+      # - name: update deployment file
+      #   run: |
+      #     sed -i "s|image: docker.io/ghazanfar/demo-kotlin:|image: docker.io/ghazanfar/demo-kotlin:${GITHUB_SHA::8}|g" Kubernetes/deployment.yaml
+
+      # - name: cat the deployment file to see what will be applied
+      #   run: | 
+      #     cat Kubernetes/deployment.yaml
 
       # - name: deploy to namespace
       #   run: |
