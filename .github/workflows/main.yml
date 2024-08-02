@@ -19,6 +19,33 @@ jobs:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '21'
 
+    ## Build app
+      - name: check java version
+        run: java -version
+
+      - name: do a gradle build
+        run: gradle build
+
+      - name: do a gradlew build
+        run: ./gradlew build
+
+      - name: get docker version
+        run: |
+          docker -v
+
+    ## Build image  
+      - name: docker login
+        run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
+
+      - name: build docker image
+        run: |
+          docker build -t ghazanfar/demo-kotlin:2.0 -f Docker/Dockerfile .
+          docker images -a 
+
+      - name: docker image push
+        run: docker push ghazanfar/demo-kotlin:2.0
+
+    ## Deploy to Kubernetes
       - name: Log in with Azure action
         uses: azure/login@v1
         with: 
@@ -38,29 +65,8 @@ jobs:
 
       - name: create namespace
         run: |
-          kubectl create ns demo-kotlin 
+          kubectl apply -f Kubernetes/namespace.yaml
 
-      - name: check java version
-        run: java -version
-
-      - name: do a gradle build
-        run: gradle build
-
-      - name: do a gradlew build
-        run: ./gradlew build
-
-      - name: get docker version
+      - name: deploy to namespace
         run: |
-          docker -v
-          docker images -a
-      
-      - name: docker login
-        run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
-
-      - name: build docker image
-        run: |
-          docker build -t ghazanfar/demo-kotlin:2.0 .
-          docker images -a 
-
-      - name: docker image push
-        run: docker push ghazanfar/demo-kotlin:2.0
+          kubectl apply -f Kubernetes/deployment.yaml
