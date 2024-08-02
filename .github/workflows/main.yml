@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
+# Run the build
   build:
     runs-on: ubuntu-latest
 
@@ -45,7 +46,14 @@ jobs:
       - name: docker image push
         run: docker push ghazanfar/demo-kotlin:2.0
 
-    ## Deploy to Kubernetes
+## Deploy to Kubernetes
+  deploy:
+    needs:
+      - build
+      
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Log in with Azure action
         uses: azure/login@v1
         with: 
