@@ -36,6 +36,10 @@ jobs:
           cluster-name: tupperware
           resource-group: resourcegroup1
 
+      - name: create namespace
+        run: |
+          kubectl create ns demo-kotlin 
+
       - name: check java version
         run: java -version
 
