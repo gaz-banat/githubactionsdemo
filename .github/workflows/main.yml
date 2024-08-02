@@ -40,7 +40,7 @@ jobs:
 
       - name: build docker image
         run: |
-          docker build -t ghazanfar/demo-kotlin:2.0 Docker/
+          docker build -t ghazanfar/demo-kotlin:2.0 .
           docker images -a 
 
       - name: docker image push
@@ -50,7 +50,7 @@ jobs:
   deploy:
     needs:
       - build
-      
+
     runs-on: ubuntu-latest
 
     steps:
