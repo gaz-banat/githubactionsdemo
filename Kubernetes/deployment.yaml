@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: demo-kotlin
-        image: docker.io/ghazanfar/demo-kotlin:latest
+        image: docker.io/ghazanfar/demo-kotlin
         ports:
         - containerPort: 8080

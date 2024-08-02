@@ -20,18 +20,18 @@ jobs:
           java-version: '21'
 
     ## Build app
-      - name: check java version
-        run: java -version
+      # - name: check java version
+      #   run: java -version
 
-      - name: do a gradle build
-        run: gradle build
+      # - name: do a gradle build
+      #   run: gradle build
 
-      - name: do a gradlew build
-        run: ./gradlew build
+      # - name: do a gradlew build
+      #   run: ./gradlew build
 
-      - name: get docker version
-        run: |
-          docker -v
+      # - name: get docker version
+      #   run: |
+      #     docker -v
 
     ## Build image  
       - name: docker login
@@ -45,9 +45,6 @@ jobs:
           docker images -a 
           docker push ghazanfar/demo-kotlin:$IMAGE_TAG 
 
-      - name: docker image push
-        run: docker push ghazanfar/demo-kotlin:2.0
-
 ## Deploy to Kubernetes
   deploy:
     needs:
@@ -58,27 +55,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Log in with Azure action
-        uses: azure/login@v1
-        with: 
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      # - name: Log in with Azure action
+      #   uses: azure/login@v1
+      #   with: 
+      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-      - name: RUN AZ Command
+      # - name: RUN AZ Command
+      #   run: |
+      #     az account show
+      #     az group list
+
+      # - name: aks set context
+      #   uses: azure/aks-set-context@v1
+      #   with:
+      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      #     cluster-name: tupperware
+      #     resource-group: resourcegroup1
+
+      # - name: create namespace
+      #   run: |
+      #     kubectl apply -f Kubernetes/namespace.yaml
+      
+      - name: update deployment file
         run: |
-          az account show
-          az group list
+          sed -i "s|image: docker.io/ghazanfar/demo-kotlin:|image: docker.io/ghazanfar/demo-kotlin:${{ github.sha }}|g" Kubernetes/deployment.yaml
 
-      - name: aks set context
-        uses: azure/aks-set-context@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          cluster-name: tupperware
-          resource-group: resourcegroup1
+      - name: cat the deployment file
+        run: | 
+          cat Kubernetes/deployment.yaml
 
-      - name: create namespace
-        run: |
-          kubectl apply -f Kubernetes/namespace.yaml
-
-      - name: deploy to namespace
-        run: |
-          kubectl apply -f Kubernetes/deployment.yaml
+      # - name: deploy to namespace
+      #   run: |
+      #     kubectl apply -f Kubernetes/deployment.yaml
