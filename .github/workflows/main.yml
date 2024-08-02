@@ -10,50 +10,52 @@ on:
 
 jobs:
 # Run the build
-  build:
+  # build:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '21'
+
+  #   ## Build app
+  #     - name: check java version
+  #       run: java -version
+
+  #     - name: do a gradle build
+  #       run: gradle build
+
+  #     - name: do a gradlew build
+  #       run: ./gradlew build
+
+  #     - name: get docker version
+  #       run: |
+  #         docker -v
+
+  #   ## Build image  
+  #     - name: docker login
+  #       run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
+
+  #     - name: build docker image
+  #       run: |
+  #         docker build -t ghazanfar/demo-kotlin:2.0 .
+  #         docker images -a 
+
+  #     - name: docker image push
+  #       run: docker push ghazanfar/demo-kotlin:2.0
+
+## Deploy to Kubernetes
+  deploy:
+    # needs:
+    #   - build
+
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: '21'
 
-    ## Build app
-      - name: check java version
-        run: java -version
-
-      - name: do a gradle build
-        run: gradle build
-
-      - name: do a gradlew build
-        run: ./gradlew build
-
-      - name: get docker version
-        run: |
-          docker -v
-
-    ## Build image  
-      - name: docker login
-        run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
-
-      - name: build docker image
-        run: |
-          docker build -t ghazanfar/demo-kotlin:2.0 .
-          docker images -a 
-
-      - name: docker image push
-        run: docker push ghazanfar/demo-kotlin:2.0
-
-## Deploy to Kubernetes
-  deploy:
-    needs:
-      - build
-
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Log in with Azure action
         uses: azure/login@v1
         with: 
