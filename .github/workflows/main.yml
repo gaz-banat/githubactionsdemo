@@ -2,9 +2,9 @@ name: Continous Integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev, stg, main ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev, stg, main ]
 
   workflow_dispatch:
 
@@ -19,34 +19,37 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-    ## Build app
-      - name: check java version
-        run: java -version
+      - name: dummy step
+        run: echo "this is a dummy build step for testing"
 
-      - name: do a gradle build
-        run: gradle build
+    # ## Build app
+    #   - name: check java version
+    #     run: java -version
 
-      - name: do a gradlew build
-        run: ./gradlew build
+    #   - name: do a gradle build
+    #     run: gradle build
 
-      - name: get docker version
-        run: |
-          docker -v
+    #   - name: do a gradlew build
+    #     run: ./gradlew build
 
-    ## Build image  
-      - name: docker login
-        run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
+    #   - name: get docker version
+    #     run: |
+    #       docker -v
 
-      - name: docker image tag and build
-        env:
-          IMAGE_TAG: ${{ github.sha }} # We build the tag from the git commit sha
-        run: |
-          docker build -t ghazanfar/demo-kotlin:${GITHUB_SHA::8} .
-          docker images -a 
-          docker push ghazanfar/demo-kotlin:${GITHUB_SHA::8} 
+    # ## Build image  
+    #   - name: docker login
+    #     run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
 
-## Deploy to Kubernetes
-  deploy:
+    #   - name: docker image tag and build
+    #     env:
+    #       IMAGE_TAG: ${{ github.sha }} # We build the tag from the git commit sha
+    #     run: |
+    #       docker build -t ghazanfar/demo-kotlin:${GITHUB_SHA::8} .
+    #       docker images -a 
+    #       docker push ghazanfar/demo-kotlin:${GITHUB_SHA::8} 
+
+## Deploy to AKS cluster - we are on dev branch
+  deploy2dev:
     if: ${{ github.ref == 'refs/heads/dev' }}
     needs:
       - build
@@ -89,3 +92,18 @@ jobs:
       # - name: deploy to namespace
       #   run: |
       #     kubectl apply -f Kubernetes/deployment.yaml
+
+## Deploy to AWS cluster - we are on stg branch
+  deploy2stg:
+    if: ${{ github.ref == 'refs/heads/stg' }}
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: deploy to staging 
+        run: | 
+          echo "deploying to aws eks cluster"
