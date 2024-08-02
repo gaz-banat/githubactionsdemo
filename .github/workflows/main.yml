@@ -2,9 +2,19 @@ name: Continous Integration
 
 on:
   push:
-    branches: [ dev, stg, main ]
+    branches: 
+      - dev
+      - stg
+      - main
+      - 'feature/**'
+      - 'releases/**'
   pull_request:
-    branches: [ dev, stg, main ]
+    branches:
+      - dev
+      - stg
+      - main
+      - 'feature/**'
+      - 'releases/**'
 
   workflow_dispatch:
 
@@ -35,7 +45,12 @@ jobs:
     #   - name: get docker version
     #     run: |
     #       docker -v
-
+ 
+    #  ## Test app
+    #   - name: test app 
+    #     run: | 
+    #     echo "we do mvn test or something like that over here"
+          
     # ## Build image  
     #   - name: docker login
     #     run: docker login -u ${{ secrets.dockerhubusername }} -p ${{ secrets.dockerhubpassword }}
