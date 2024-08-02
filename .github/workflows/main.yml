@@ -39,7 +39,7 @@ jobs:
 
       - name: build docker image
         run: |
-          docker build -t ghazanfar/demo-kotlin:2.0 -f Docker/Dockerfile .
+          docker build -t ghazanfar/demo-kotlin:2.0 Docker/
           docker images -a 
 
       - name: docker image push
