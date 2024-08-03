@@ -12,8 +12,8 @@ variable "location" {
 
 variable "rg-name" {
     type = string
-    description = Name of the resource group 
-    value = "resourcegroup2"
+    description = "Name of the resource group" 
+    default = "resourcegroup2"
 }
 
 resource "azurerm_resource_group" "rg" {
