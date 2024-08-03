@@ -10,13 +10,15 @@ variable "location" {
     default = "australiasoutheast"
 }
 
-resource "random_pet" "rg-name" {
-    prefix = var.rg_prefix
+variable "rg-name" {
+    type = string
+    description = Name of the resource group 
+    value = "resourcegroup2"
 }
 
-resource "azurerm_resource_group" "" {
+resource "azurerm_resource_group" "rg" {
     location = var.location
-    name = random_pet.rg-name.id
+    name = var.rg-name
 }
 
 output "resource_group_location" {
