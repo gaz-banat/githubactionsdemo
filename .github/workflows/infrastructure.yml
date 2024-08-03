@@ -20,10 +20,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
-  defaults:
-    run:
-      shell: bash
-      working-directory: Terraform 
+    defaults:
+      run:
+        shell: bash
+        working-directory: Terraform 
 
     steps:
       - name: checkout repository
