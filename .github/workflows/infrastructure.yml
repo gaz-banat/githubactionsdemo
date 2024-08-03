@@ -12,12 +12,18 @@ on:
 jobs:
   terraform:
     name: 'Terraform'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
     runs-on: ubuntu-latest
 
-  # defaults:
-  #   run:
-  #     shell: bash
-  #     working-directory: terraform 
+  defaults:
+    run:
+      shell: bash
+      working-directory: Terraform 
 
     steps:
       - name: checkout repository
@@ -36,3 +42,10 @@ jobs:
           wget https://github.com/terraform-linters/tflint/releases/download/v0.25.0/tflint_linux_amd64.zip
           unzip tflint_linux_amd64.zip 
           mv tflint /usr/local/bin
+
+      - name: Terraform init
+        run: |
+          terraform init
+
+      - name: Terraform plan
+        run: terraform plan
