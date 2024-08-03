@@ -1,26 +1,26 @@
 provider "azurerm" {
-    features {}
+  features {}
 }
 
 variable "rg_prefix" {
-    default = "rg"
+  default = "rg"
 }
 
 variable "location" {
-    default = "australiasoutheast"
+  default = "australiasoutheast"
 }
 
 variable "rg-name" {
-    type = string
-    description = "Name of the resource group" 
-    default = "resourcegroup2"
+  type        = string
+  description = "Name of the resource group"
+  default     = "resourcegroup2"
 }
 
 resource "azurerm_resource_group" "rg" {
-    location = var.location
-    name = var.rg-name
+  location = var.location
+  name     = var.rg-name
 }
 
 output "resource_group_location" {
-    value = azurerm_resource_group.rg.name
+  value = azurerm_resource_group.rg.name
 }
