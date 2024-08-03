@@ -212,3 +212,6 @@ jobs:
     environment: production
 
     steps:
+      - name: Deploy to prod 
+        run: |
+          echo "This is where we deploy to prod"
