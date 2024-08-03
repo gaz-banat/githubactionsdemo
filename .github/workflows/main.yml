@@ -1,4 +1,4 @@
-name: Continous Integration
+name: c-eye-c-dee
 
 on:
   push:
@@ -61,13 +61,20 @@ jobs:
     #       docker images -a 
     #       docker push ghazanfar/demo-kotlin:${GITHUB_SHA::8} 
 
-## Deploy to AKS cluster - we are on dev branch
+## Deploy to AKS cluster directly via resource manifest - we are on dev branch
   deploy2dev:
     if: ${{ github.ref == 'refs/heads/dev' }}
+
     needs:
       - build
 
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    environment: development
 
     steps:
       - uses: actions/checkout@v3
@@ -105,17 +112,102 @@ jobs:
         run: |
           kubectl apply -f Kubernetes/deployment.yaml
 
-## Deploy to AWS cluster - we are on stg branch
+## Deploy to AWS cluster using terraform - we are on stg branch
   deploy2stg:
     if: ${{ github.ref == 'refs/heads/stg' }}
+
+    needs:
+      - build
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: Terraform 
+
+    environment: staging
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      ## Without action, using shell via run
+      # - name: 'Install pre-reqs'
+      #   run: |
+      #     curl -SL  https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip --output terraform.zip
+      #     unzip "terraform.zip"
+      #     mv terraform /usr/local/bin
+      #     terraform --version
+      #     rm terraform.zip
+
+      # - name: 'Install TFLint'
+      #   run: |
+      #     wget https://github.com/terraform-linters/tflint/releases/download/v0.25.0/tflint_linux_amd64.zip
+      #     unzip tflint_linux_amd64.zip 
+      #     mv tflint /usr/local/bin
+
+      # - name: Terraform init
+      #   run: |
+      #     terraform init
+
+      # - name: Terraform plan
+      #   run: terraform plan
+
+      # - name: Terraform apply
+      #   run: terraform apply --auto-approve
+
+      ## With github action for terraform
+      - name: 'Terraform Format'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.8 
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: "./Terraform"
+          tf_actions_comment: 'true'
+
+      - name: 'Terraform Init'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.8 
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: "./Terraform"
+          tf_actions_comment: 'true'
+
+      - name: 'Terraform Plan'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.8 
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: "./Terraform"
+          tf_actions_comment: 'true'
+
+      - name: 'Terraform Apply'
+        uses: hashicorp/terraform-github-actions@master
+          tf_actions_version: 0.14.8 
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: "./Terraform"
+          tf_actions_comment: 'true'
+
+## Deploy to somewhere using something - we are on main branch
+  deploy2prod:
+    if: ${{ github.ref == 'refs/heads/main' }}
+
     needs:
       - build
 
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+    defaults:
+      run:
+        shell: bash
 
-      - name: deploy to staging 
-        run: | 
-          echo "deploying to aws eks cluster"
+    environment: production
+
+    steps:
