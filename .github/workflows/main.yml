@@ -13,8 +13,6 @@ on:
       - dev
       - stg
       - main
-      - 'feature/**'
-      - 'releases/**'
 
   workflow_dispatch:
 
@@ -95,18 +93,17 @@ jobs:
         run: |
           kubectl apply -f Kubernetes/namespace.yaml
       
-      ## Still need to figure this out
-      # - name: update deployment file
-      #   run: |
-      #     sed -i "s|image: docker.io/ghazanfar/demo-kotlin:|image: docker.io/ghazanfar/demo-kotlin:${GITHUB_SHA::8}|g" Kubernetes/deployment.yaml
+      - name: update deployment file
+        run: |
+          sed -i "s|image: docker.io/ghazanfar/demo-kotlin:|image: docker.io/ghazanfar/demo-kotlin:${GITHUB_SHA::8}|g" Kubernetes/deployment.yaml
 
-      # - name: cat the deployment file to see what will be applied
-      #   run: | 
-      #     cat Kubernetes/deployment.yaml
+      - name: cat the deployment file to see what will be applied
+        run: | 
+          cat Kubernetes/deployment.yaml
 
-      # - name: deploy to namespace
-      #   run: |
-      #     kubectl apply -f Kubernetes/deployment.yaml
+      - name: deploy to namespace
+        run: |
+          kubectl apply -f Kubernetes/deployment.yaml
 
 ## Deploy to AWS cluster - we are on stg branch
   deploy2stg:
